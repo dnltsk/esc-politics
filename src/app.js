@@ -4,12 +4,8 @@ import * as topojson from 'topojson'
 let mapData = null;
 
 (async function () {
-  // Loading external data
-
   mapData = await d3.json("/data/lim.json");
-
   drawCharts();
-
   window.addEventListener("resize", drawCharts);
 })();
 
@@ -32,19 +28,19 @@ function drawChart(targetElement) {
   const width = innerWidth;
   const height = innerHeight;
 
-  var projection = d3.geoMercator()
+  const projection = d3.geoMercator()
     .scale(5000)
     .center([1.8, 41.9])
     .translate([width / 2, height / 2]);
 
-  var path = d3.geoPath()
+  const path = d3.geoPath()
     .projection(projection);
 
-  var svg = targetElement.append("svg")
+  const svg = targetElement.append("svg")
     .attr("width", width)
     .attr("height", height);
 
-  var g = svg.append("g")
+  const g = svg.append("g")
     .on("wheel.zoom", function () {
       var currScale = projection.scale();
       var newScale = currScale - 2 * event.deltaY;
