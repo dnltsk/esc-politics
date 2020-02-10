@@ -1,0 +1,70 @@
+html, body {
+  height: 100%;
+}
+
+.grid-container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 0.5fr;
+  grid-template-rows: 100px 1fr 1fr;
+  grid-template-areas: "header header header" "ul ur info" "ll lr info";
+}
+
+.header {
+  grid-area: header;
+}
+
+.info {
+  grid-area: info;
+}
+
+.ul {
+  grid-area: ul;
+}
+
+.ur {
+  grid-area: ur;
+}
+
+.ll {
+  grid-area: ll;
+}
+
+.lr {
+  grid-area: lr;
+}
+
+.ul, .ur, .ll, .lr {
+  overflow: hidden;
+}
+
+//
+// MAP
+//
+.background {
+  fill: #eee;
+  pointer-events: all;
+}
+
+.map-layer {
+  fill: #fff;
+  stroke: #aaa;
+}
+
+.effect-layer{
+  pointer-events:none;
+}
+
+text{
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 300;
+}
+
+text.big-text{
+  font-size: 30px;
+  font-weight: 400;
+}
+
+.effect-layer text, text.dummy-text{
+  font-size: 12px;
+}
