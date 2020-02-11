@@ -36,18 +36,16 @@ function drawChart(targetElement) {
 
   const g = svg.append("g")
     .on("wheel.zoom", function () {
-      console.log("event",event);
+      const ZOOM_FACTOR = 0.000005;
+      const ZOOM_IN_LIMIT = 0.001;
+      const ZOOM_OUT_LIMIT = 0.00006;
       var currScale = projection.scale();
-      console.log("currScale",currScale);
-      var newScale = currScale - 0.000005 * event.deltaY;
+      var newScale = currScale - ZOOM_FACTOR * event.deltaY;
       if(event.deltaY < 0){
-        console.log("in");
-        newScale = Math.min(0.001, newScale);
+        newScale = Math.min(ZOOM_IN_LIMIT, newScale);
       }else{
-        console.log("out");
-        newScale = Math.max(0.00006, newScale);
+        newScale = Math.max(ZOOM_OUT_LIMIT, newScale);
       }
-      console.log("newScale",newScale);
       var currTranslate = projection.translate();
       var coords = projection.invert([event.offsetX, event.offsetY]);
       projection.scale(newScale);
