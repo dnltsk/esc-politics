@@ -39,24 +39,24 @@ function drawChart(targetElement) {
       const ZOOM_FACTOR = 0.000005;
       const ZOOM_IN_LIMIT = 0.001;
       const ZOOM_OUT_LIMIT = 0.00006;
-      var currScale = projection.scale();
-      var newScale = currScale - ZOOM_FACTOR * event.deltaY;
+      const currScale = projection.scale();
+      let newScale = currScale - ZOOM_FACTOR * event.deltaY;
       if(event.deltaY < 0){
         newScale = Math.min(ZOOM_IN_LIMIT, newScale);
       }else{
         newScale = Math.max(ZOOM_OUT_LIMIT, newScale);
       }
-      var currTranslate = projection.translate();
-      var coords = projection.invert([event.offsetX, event.offsetY]);
+      const currTranslate = projection.translate();
+      const coords = projection.invert([event.offsetX, event.offsetY]);
       projection.scale(newScale);
-      var newPos = projection(coords);
+      const newPos = projection(coords);
 
       projection.translate([currTranslate[0] + (event.offsetX - newPos[0]), currTranslate[1] + (event.offsetY - newPos[1])]);
       g.selectAll("path").attr("d", path);
 
     })
     .call(d3.drag().on("drag", function () {
-      var currTranslate = projection.translate();
+      const currTranslate = projection.translate();
       projection.translate([currTranslate[0] + d3.event.dx,
                             currTranslate[1] + d3.event.dy]);
       g.selectAll("path").attr("d", path);
