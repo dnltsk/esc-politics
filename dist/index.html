@@ -1,26 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Learning D3.js</title>
-    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+          rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css" rel="stylesheet">
-    <link href="/dist/main.bundle.css" rel="stylesheet">
-  </head>
-  <body>
+    <style>
+        html, body {
+            height: 100%;
+        }
 
-    <div class="grid-container">
-      <div class="header">
+        .grid-container {
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.5fr;
+            grid-template-rows: 100px 1fr 1fr;
+            grid-template-areas: "header header header" "ul ur info" "ll lr info";
+        }
+
+        .header {
+            grid-area: header;
+        }
+
+        .info {
+            grid-area: info;
+        }
+
+        .ul {
+            grid-area: ul;
+        }
+
+        .ur {
+            grid-area: ur;
+        }
+
+        .ll {
+            grid-area: ll;
+        }
+
+        .lr {
+            grid-area: lr;
+        }
+
+        .ul, .ur, .ll, .lr {
+            overflow: hidden;
+        }
+
+        /
+        /
+        /
+        /
+        MAP
+
+        /
+        /
+        .background {
+            fill: #eee;
+            pointer-events: all;
+        }
+
+        .map-layer {
+            fill: #fff;
+            stroke: #aaa;
+        }
+
+        .effect-layer {
+            pointer-events: none;
+        }
+
+        text {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-weight: 300;
+        }
+
+        text.big-text {
+            font-size: 30px;
+            font-weight: 400;
+        }
+
+        .effect-layer text, text.dummy-text {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="grid-container">
+    <div class="header">
         ESC Politics
-      </div>
-      <div class="info"></div>
-      <div class="ul"></div>
-      <div class="ur"></div>
-      <div class="ll"></div>
-      <div class="lr"></div>
     </div>
+    <div class="info"></div>
+    <div class="ul"></div>
+    <div class="ur"></div>
+    <div class="ll"></div>
+    <div class="lr"></div>
+</div>
 
-    <script src="/dist/app.bundle.js" type="text/javascript"></script>
-  </body>
+<script src="app.js" type="text/javascript"></script>
+</body>
 </html>
