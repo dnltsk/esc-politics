@@ -1,6 +1,7 @@
 import {fitToProjection, project} from "./projection-util";
 import * as d3 from "d3";
-import {FeatureCollection} from "geojson";
+import {FeatureCollection, Polygon} from "geojson";
+import {CountryProperties} from "./types";
 
 const projection = d3.geoProjection(project)
   .scale(500)
@@ -10,7 +11,7 @@ const projection = d3.geoProjection(project)
 const path = d3.geoPath()
   .projection(projection);
 
-export function drawChart(targetElement, mapData: FeatureCollection) {
+export function drawChart(targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>, mapData: FeatureCollection<Polygon, CountryProperties>) {
   console.log("drawChart", mapData);
   targetElement.html("");
 

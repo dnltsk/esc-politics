@@ -1,10 +1,11 @@
 import * as d3 from 'd3';
 import {drawChart} from "./map";
-import {FeatureCollection} from "geojson";
+import {FeatureCollection, Polygon} from "geojson";
+import {CountryProperties} from "./types";
 
 export class App {
 
-  mapData: FeatureCollection = null;
+  mapData: FeatureCollection<Polygon, CountryProperties> = null;
 
   constructor() {
     d3.json("/esc-countries-wgs84.geojson").then((data) => {

@@ -1,10 +1,12 @@
+import * as d3 from 'd3';
 import * as _proj4 from 'proj4';
+import {FeatureCollection} from "geojson";
 
 let proj4 = (_proj4 as any).default;
 
 const epsg32632 = proj4("PROJCS[\"WGS 84 / UTM zone 32N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],AUTHORITY[\"EPSG\",\"32632\"],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]");
 
-export function fitToProjection(path, projection, geometry, width, height) {
+export function fitToProjection(path: d3.GeoPath, projection: d3.GeoProjection, geometry: FeatureCollection, width: number, height: number) {
   projection
     .scale(1)
     .translate([0, 0]);
@@ -18,18 +20,18 @@ export function fitToProjection(path, projection, geometry, width, height) {
     .translate(t);
 }
 
-export function project(lambda, phi) {
+export function project(lambda: number, phi: number) {
   return epsg32632.forward([lambda, phi].map(radiansToDegrees));
 }
 
-project.invert = function (x, y) {
+project.invert = function (x: number, y: number) {
   return epsg32632.inverse([x, y]).map(degreesToRadians);
 };
 
-function degreesToRadians(degrees) {
+function degreesToRadians(degrees: number) {
   return degrees * Math.PI / 180;
 }
 
-function radiansToDegrees(radians) {
+function radiansToDegrees(radians: number) {
   return radians * 180 / Math.PI;
 }
