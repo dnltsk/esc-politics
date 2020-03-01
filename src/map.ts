@@ -1,5 +1,6 @@
 import {fitToProjection, project} from "./projection-util";
 import * as d3 from "d3";
+import {FeatureCollection} from "geojson";
 
 let projection = d3.geoProjection(project)
   .scale(500)
@@ -9,7 +10,7 @@ let projection = d3.geoProjection(project)
 const path = d3.geoPath()
   .projection(projection);
 
-export function drawChart(targetElement, mapData) {
+export function drawChart(targetElement, mapData: FeatureCollection) {
   targetElement.html("");
 
   const innerWidth = targetElement.node().clientWidth,
