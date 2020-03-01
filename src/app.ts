@@ -8,14 +8,13 @@ export class App {
 
   constructor() {
     d3.json("/esc-countries-wgs84.geojson").then((data) => {
-      console.log("data", data);
+      console.log("LOADED!", data);
       this.mapData = data;
       this.drawCharts();
-      window.addEventListener("resize", app.drawCharts);
     });
   }
 
-  private drawCharts() {
+  public drawCharts() {
     drawChart(d3.select(".ul"), this.mapData);
     drawChart(d3.select(".ur"), this.mapData);
     drawChart(d3.select(".ll"), this.mapData);
@@ -24,5 +23,8 @@ export class App {
 
 }
 
-const app: App = new App();
+const app = new App();
 
+window.addEventListener('resize', function () {
+  app.drawCharts()
+}, false);

@@ -2,7 +2,7 @@ import {fitToProjection, project} from "./projection-util";
 import * as d3 from "d3";
 import {FeatureCollection} from "geojson";
 
-let projection = d3.geoProjection(project)
+const projection = d3.geoProjection(project)
   .scale(500)
   .center([12.0, 53.0])
   .translate([500 / 2, 500 / 2]);
@@ -11,6 +11,7 @@ const path = d3.geoPath()
   .projection(projection);
 
 export function drawChart(targetElement, mapData: FeatureCollection) {
+  console.log("drawChart", mapData);
   targetElement.html("");
 
   const innerWidth = targetElement.node().clientWidth,
@@ -25,17 +26,15 @@ export function drawChart(targetElement, mapData: FeatureCollection) {
     .attr("width", width)
     .attr("height", height);
 
-  const g = svg.append("g")
-    .call(d3.zoom()).on("wheel.zoom", zoomFunction)
-    .call(d3.drag().on("drag", panFunction));
+  const g = svg.append("g");
+  g.call(d3.drag().on("drag", panFunction));
+  g.call(d3.zoom()).on("wheel.zoom", zoomFunction);
 
   g.append("rect")
     .attr("class", "background")
     .attr("width", width)
     .attr("height", height)
     .style("fill", "#0077be");
-
-  console.log("app.mapData.features", mapData.features);
 
   g.selectAll(".com")
     .data(mapData.features)
