@@ -8,7 +8,7 @@ export class App {
   mapData: FeatureCollection<Polygon, CountryProperties> = null;
 
   constructor() {
-    d3.json("/esc-countries-wgs84.geojson").then((data) => {
+    d3.json("data/esc-countries.geojson").then((data) => {
       console.log("LOADED!", data);
       this.mapData = data;
       this.drawCharts();
