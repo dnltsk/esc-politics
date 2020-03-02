@@ -13,49 +13,65 @@ export class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
-  constructor() {
+  mapData: FeatureCollection<Polygon, CountryProperties>;
+  targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
+  g: d3.Selection<SVGElement, {}, HTMLElement, any>;
+
+  constructor(mapData, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+    this.mapData = mapData;
+    this.targetElement = targetElement;
+    this.initMap();
   }
 
-  public drawChart(targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>, mapData: FeatureCollection<Polygon, CountryProperties>) {
-    targetElement.html("");
+  public resize() {
+    const innerWidth = this.targetElement.node().clientWidth,
+      innerHeight = this.targetElement.node().clientHeight;
 
-    const innerWidth = targetElement.node().clientWidth,
-      innerHeight = targetElement.node().clientHeight;
+    fitToProjection(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
-    fitToProjection(this.path, this.projection, mapData, innerWidth, innerHeight);
+    this.g.selectAll("countries")
+      .data(this.mapData.features)
+      .enter()
+      .selectAll("path")
+      .attr("d", this.path)
+  }
 
-    const width = innerWidth;
-    const height = innerHeight;
+  private initMap() {
+    this.targetElement.html("");
 
-    const svg = targetElement.append("svg")
-      .attr("width", width)
-      .attr("height", height);
+    const innerWidth = this.targetElement.node().clientWidth,
+      innerHeight = this.targetElement.node().clientHeight;
 
-    const g = svg.append("g");
+    fitToProjection(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
-    g.call(d3.drag().on("drag",
+    const svg = this.targetElement.append("svg")
+      .attr("width", "100%")
+      .attr("height", "100%");
+
+    this.g = svg.append("g");
+
+    this.g.call(d3.drag().on("drag",
       (d, i, n) => this.dragFunction(d3.select(n[i])))
     );
 
-    g.call(d3.zoom()).on("wheel.zoom",
+    this.g.call(d3.zoom()).on("wheel.zoom",
       (d, i, n) => this.zoomFunction(d3.select(n[i]))
     );
 
-    g.append("rect")
+    this.g.append("rect")
       .attr("class", "background")
-      .attr("width", width)
-      .attr("height", height)
+      .attr("width", "100%")
+      .attr("height", "100%")
       .style("fill", "#0077be");
 
-    g.selectAll(".com")
-      .data(mapData.features)
+    this.g.selectAll("countries")
+      .data(this.mapData.features)
       .enter()
       .append("path")
       .attr("id", "state-borders")
       .attr("d", this.path)
       .style("fill", "#4a6170")
       .style("stroke", "#fff");
-
   }
 
   private zoomFunction(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
