@@ -1,4 +1,4 @@
-import {fitToProjection, project} from "./projection-util";
+import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryProperties} from "./types";
@@ -17,23 +17,24 @@ export class Map {
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
-  constructor(mapData, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+  constructor(mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
     this.mapData = mapData;
     this.targetElement = targetElement;
     this.initMap();
   }
 
   public resize() {
+    console.log("resize");
     const innerWidth = this.targetElement.node().clientWidth,
       innerHeight = this.targetElement.node().clientHeight;
 
-    fitToProjection(this.path, this.projection, this.mapData, innerWidth, innerHeight);
+    fitToMap(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
     this.g.selectAll("countries")
       .data(this.mapData.features)
       .enter()
       .selectAll("path")
-      .attr("d", this.path)
+      .attr("d", this.path);
   }
 
   private initMap() {
@@ -42,7 +43,7 @@ export class Map {
     const innerWidth = this.targetElement.node().clientWidth,
       innerHeight = this.targetElement.node().clientHeight;
 
-    fitToProjection(this.path, this.projection, this.mapData, innerWidth, innerHeight);
+    initFitToMap(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
     const svg = this.targetElement.append("svg")
       .attr("width", "100%")
@@ -79,11 +80,11 @@ export class Map {
       });
   }
 
-  private mouseoverFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>){
+  private mouseoverFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
     path.classed("selected", true);
   }
 
-  private mouseoutFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>){
+  private mouseoutFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
     path.classed("selected", false);
   }
 
