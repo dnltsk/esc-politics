@@ -1,4 +1,4 @@
 export interface CountryProperties {
-  foo: "bar" | "baz";
-  hello: string;
+  NAME: string;
+  ADM0_A3: string;
 }

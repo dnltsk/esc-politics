@@ -2,6 +2,7 @@ import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryProperties} from "./types";
+import {App} from "./app";
 
 export class Map {
 
@@ -13,11 +14,13 @@ export class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
+  app: App;
   mapData: FeatureCollection<Polygon, CountryProperties>;
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
-  constructor(mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+  constructor(app: App, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+    this.app = app;
     this.mapData = mapData;
     this.targetElement = targetElement;
     this.initMap();
@@ -37,6 +40,26 @@ export class Map {
       .attr("d", this.path);
   }
 
+  public globalMouseover(ADM0_A3: string) {
+    this.g.selectAll("." + ADM0_A3).classed("selected", true);
+  }
+
+  public globalMouseout(ADM0_A3: string) {
+    this.g.selectAll("." + ADM0_A3).classed("selected", false);
+  }
+
+  public globalScale(scale: number, translate: [number, number]){
+    this.projection
+      .scale(scale)
+      .translate(translate);
+    this.g.selectAll("path").attr("d", this.path);
+  }
+
+  public globalDrag(translate: [number, number]) {
+    this.projection.translate(translate);
+    this.g.selectAll("path").attr("d", this.path);
+  }
+
   private initMap() {
     this.targetElement.html("");
 
@@ -52,11 +75,11 @@ export class Map {
     this.g = svg.append("g");
 
     this.g.call(d3.drag().on("drag",
-      (d, i, n) => this.dragFunction(d3.select(n[i])))
+      (d, i, n) => this.drag(d3.select(n[i])))
     );
 
     this.g.call(d3.zoom()).on("wheel.zoom",
-      (d, i, n) => this.zoomFunction(d3.select(n[i]))
+      (d, i, n) => this.zoom(d3.select(n[i]))
     );
 
     this.g.append("rect")
@@ -70,25 +93,27 @@ export class Map {
       .enter()
       .append("path")
       .classed("country", true)
-      .attr("id", "state-borders")
+      .each(function (d) {
+        this.classList.add(d.properties.ADM0_A3);
+      })
       .attr("d", this.path)
       .on("mouseover", (d, i, n) => {
-        this.mouseoverFunction(d, d3.select(n[i]));
+        this.localMouseover(d, d3.select(n[i]));
       })
       .on("mouseout", (d, i, n) => {
-        this.mouseoutFunction(d, d3.select(n[i]));
+        this.localMouseout(d, d3.select(n[i]));
       });
   }
 
-  private mouseoverFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    path.classed("selected", true);
+  private localMouseover(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
+    this.app.globalMouseover(geom.properties.ADM0_A3);
   }
 
-  private mouseoutFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    path.classed("selected", false);
+  private localMouseout(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
+    this.app.globalMouseout(geom.properties.ADM0_A3);
   }
 
-  private zoomFunction(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
+  private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
     const ZOOM_FACTOR = 0.000005;
     const ZOOM_IN_LIMIT = 0.001;
     const ZOOM_OUT_LIMIT = 0.00006;
@@ -105,15 +130,15 @@ export class Map {
     this.projection.scale(newScale);
     const newPos = this.projection(coords);
 
-    this.projection.translate([currTranslate[0] + (d3.event.offsetX - newPos[0]), currTranslate[1] + (d3.event.offsetY - newPos[1])]);
-    g.selectAll("path").attr("d", this.path);
+    const translate: [number, number] = [currTranslate[0] + (d3.event.offsetX - newPos[0]), currTranslate[1] + (d3.event.offsetY - newPos[1])];
+
+    this.app.globalZoom(newScale, translate);
   }
 
-  private dragFunction(g: d3.Selection<Element, {}, HTMLElement, any>) {
+  private drag(g: d3.Selection<Element, {}, HTMLElement, any>) {
     const currTranslate = this.projection.translate();
-    this.projection.translate([currTranslate[0] + d3.event.dx,
-                               currTranslate[1] + d3.event.dy]);
-    g.selectAll("path").attr("d", this.path);
+    const translate: [number, number] = [currTranslate[0] + d3.event.dx, currTranslate[1] + d3.event.dy];
+    this.app.globalDrag(translate);
   }
 
 }
