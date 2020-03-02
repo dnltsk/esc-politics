@@ -52,6 +52,16 @@ html, body {
   stroke: #aaa;
 }
 
+path.country {
+  fill: #4a6170;
+  stroke: #fff;
+}
+
+path.country.selected {
+  fill: red;
+  stroke: red;
+}
+
 .effect-layer {
   pointer-events: none;
 }

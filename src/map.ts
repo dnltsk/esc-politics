@@ -1,6 +1,6 @@
 import {fitToProjection, project} from "./projection-util";
 import * as d3 from "d3";
-import {FeatureCollection, Polygon} from "geojson";
+import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryProperties} from "./types";
 
 export class Map {
@@ -68,10 +68,23 @@ export class Map {
       .data(this.mapData.features)
       .enter()
       .append("path")
+      .classed("country", true)
       .attr("id", "state-borders")
       .attr("d", this.path)
-      .style("fill", "#4a6170")
-      .style("stroke", "#fff");
+      .on("mouseover", (d, i, n) => {
+        this.mouseoverFunction(d, d3.select(n[i]));
+      })
+      .on("mouseout", (d, i, n) => {
+        this.mouseoutFunction(d, d3.select(n[i]));
+      });
+  }
+
+  private mouseoverFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>){
+    path.classed("selected", true);
+  }
+
+  private mouseoutFunction(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>){
+    path.classed("selected", false);
   }
 
   private zoomFunction(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
