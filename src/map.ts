@@ -2,7 +2,7 @@ import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryProperties} from "./types";
-import {App} from "./app";
+import {EventBus} from "./event-bus";
 
 export class Map {
 
@@ -14,19 +14,19 @@ export class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
-  app: App;
+  eventBus: EventBus;
   mapData: FeatureCollection<Polygon, CountryProperties>;
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
-  constructor(app: App, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
-    this.app = app;
+  constructor(eventBus: EventBus, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+    this.eventBus = eventBus;
     this.mapData = mapData;
     this.targetElement = targetElement;
     this.initMap();
   }
 
-  public resize() {
+  public receiveResize() {
     console.log("resize");
     const innerWidth = this.targetElement.node().clientWidth,
       innerHeight = this.targetElement.node().clientHeight;
@@ -40,22 +40,22 @@ export class Map {
       .attr("d", this.path);
   }
 
-  public globalMouseover(ADM0_A3: string) {
+  public receiveMouseover(ADM0_A3: string) {
     this.g.selectAll("." + ADM0_A3).classed("selected", true);
   }
 
-  public globalMouseout(ADM0_A3: string) {
+  public receiveMouseout(ADM0_A3: string) {
     this.g.selectAll("." + ADM0_A3).classed("selected", false);
   }
 
-  public globalScale(scale: number, translate: [number, number]){
+  public receiveZoom(scale: number, translate: [number, number]){
     this.projection
       .scale(scale)
       .translate(translate);
     this.g.selectAll("path").attr("d", this.path);
   }
 
-  public globalDrag(translate: [number, number]) {
+  public receiveDrag(translate: [number, number]) {
     this.projection.translate(translate);
     this.g.selectAll("path").attr("d", this.path);
   }
@@ -106,11 +106,11 @@ export class Map {
   }
 
   private localMouseover(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    this.app.globalMouseover(geom.properties.ADM0_A3);
+    this.eventBus.sendMouseover(geom.properties.ADM0_A3);
   }
 
   private localMouseout(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    this.app.globalMouseout(geom.properties.ADM0_A3);
+    this.eventBus.sendMouseout(geom.properties.ADM0_A3);
   }
 
   private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
@@ -132,13 +132,13 @@ export class Map {
 
     const translate: [number, number] = [currTranslate[0] + (d3.event.offsetX - newPos[0]), currTranslate[1] + (d3.event.offsetY - newPos[1])];
 
-    this.app.globalZoom(newScale, translate);
+    this.eventBus.sendZoom(newScale, translate);
   }
 
   private drag(g: d3.Selection<Element, {}, HTMLElement, any>) {
     const currTranslate = this.projection.translate();
     const translate: [number, number] = [currTranslate[0] + d3.event.dx, currTranslate[1] + d3.event.dy];
-    this.app.globalDrag(translate);
+    this.eventBus.sendDrag(translate);
   }
 
 }
