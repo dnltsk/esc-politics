@@ -1,41 +1,100 @@
-html, body {
-  height: 100%;
-}
+/*html, body {*/
+/*  height: 100%;*/
+/*}*/
 
 .grid-container {
-  height: 100%;
   display: grid;
-  grid-template-columns: 1fr 1fr 0.5fr;
-  grid-template-rows: 100px 1fr 1fr;
-  grid-template-areas: "header header header" "ul ur info" "ll lr info";
+  grid-template-columns: .5fr 30em 30em .5fr;
+  grid-template-rows: 10em 1fr 27em 27em 1fr 1fr 5em;
+  grid-template-areas: ". header header ." ". overview overview ." ". ul ur ." ". ll lr ." ". details details ." ". other other ." ". footer footer .";
 }
 
-.header {
-  grid-area: header;
-}
-
-.info {
-  grid-area: info;
-}
+.overview { grid-area: overview; }
 
 .ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2em 1fr;
+  grid-template-areas: "ul-map-title" "ul-map";
   grid-area: ul;
 }
 
+.ul-map-title { grid-area: ul-map-title; }
+
+.ul-map { grid-area: ul-map; }
+
 .ur {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2em 1fr;
+  grid-template-areas: "ur-map-title" "ur-map";
   grid-area: ur;
 }
 
+.ur-map-title { grid-area: ur-map-title; }
+
+.ur-map { grid-area: ur-map; }
+
 .ll {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2em 1fr;
+  grid-template-areas: "ll-map-title" "ll-map";
   grid-area: ll;
 }
 
+.ll-map-title { grid-area: ll-map-title; }
+
+.ll-map { grid-area: ll-map; }
+
 .lr {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 2em 1fr;
+  grid-template-areas: "lr-map-title" "lr-map";
   grid-area: lr;
 }
 
-.ul, .ur, .ll, .lr {
-  overflow: hidden;
+.lr-map-title { grid-area: lr-map-title; }
+
+.lr-map { grid-area: lr-map; }
+
+.ul, .ur, .ll, .lr{
+  min-width: 30fr;
+  min-height: 27fr;
+}
+
+.details { grid-area: details; }
+
+.other { grid-area: other; }
+
+.header { grid-area: header; }
+
+.footer { grid-area: footer; }
+
+
+/*       */
+/*  TEXT */
+/*       */
+.header{
+  margin:auto auto;
+  font-size: 5em;
+}
+.overview, .details, .other {
+  padding: 20px 5px 0 5px;
+}
+.overview{
+  margin: 0 0 50px 0;
+}
+.footer{
+  margin:auto auto;
+}
+.map-title{
+  text-align: center;
+  font-size: 1.3em;
+}
+.map-container{
+  text-align: center;
 }
 
 /*      */

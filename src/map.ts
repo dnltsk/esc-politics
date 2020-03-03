@@ -61,7 +61,6 @@ export class Map {
   }
 
   private initMap() {
-    this.targetElement.html("");
 
     const innerWidth = this.targetElement.node().clientWidth,
       innerHeight = this.targetElement.node().clientHeight;
@@ -69,8 +68,8 @@ export class Map {
     initFitToMap(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
     const svg = this.targetElement.append("svg")
-      .attr("width", "100%")
-      .attr("height", "100%");
+      .attr("width", "95%")
+      .attr("height", "95%");
 
     this.g = svg.append("g");
 

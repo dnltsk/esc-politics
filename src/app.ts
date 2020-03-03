@@ -17,10 +17,10 @@ export class App {
   }
 
   public initMaps(mapData: FeatureCollection<Polygon, CountryProperties>) {
-    const ul = new Map(this.eventBus, mapData, d3.select(".ul"));
-    const ur = new Map(this.eventBus, mapData, d3.select(".ur"));
-    const ll = new Map(this.eventBus, mapData, d3.select(".ll"));
-    const lr = new Map(this.eventBus, mapData, d3.select(".lr"));
+    const ul = new Map(this.eventBus, mapData, d3.select(".ul-map"));
+    const ur = new Map(this.eventBus, mapData, d3.select(".ur-map"));
+    const ll = new Map(this.eventBus, mapData, d3.select(".ll-map"));
+    const lr = new Map(this.eventBus, mapData, d3.select(".lr-map"));
     this.eventBus.maps = [ul, ur, ll, lr];
   }
 
@@ -28,6 +28,6 @@ export class App {
 
 const app = new App();
 
-window.addEventListener('resize', function (e) {
-  app.eventBus.sendResize();
-}, false);
+// window.addEventListener('resize', function (e) {
+//   app.eventBus.sendResize();
+// }, false);
