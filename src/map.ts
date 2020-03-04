@@ -113,6 +113,7 @@ export class Map {
   }
 
   private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
+    d3.event.preventDefault();//lock body scroll
     const ZOOM_FACTOR = 0.000005;
     const ZOOM_IN_LIMIT = 0.001;
     const ZOOM_OUT_LIMIT = 0.00006;
