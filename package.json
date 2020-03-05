@@ -2,10 +2,11 @@
   "name": "tswebpack4",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --content-base dist/ --mode development",
+    "start-scrape": "ts-node src/scraper/scraper.ts",
     "build": "webpack"
   },
   "keywords": [],
@@ -15,6 +16,7 @@
     "@types/d3": "^5.7.2",
     "@types/proj4": "^2.5.0",
     "ts-loader": "^6.2.1",
+    "ts-node": "^8.6.2",
     "typescript": "^3.7.5",
     "webpack": "^4.41.6",
     "webpack-cli": "^3.3.11",
@@ -22,7 +24,9 @@
   },
   "dependencies": {
     "@types/geojson": "^7946.0.7",
+    "@types/node-fetch": "^2.5.5",
     "d3": "^5.15.0",
+    "node-fetch": "^2.6.0",
     "proj4": "^2.5.0"
   }
 }

@@ -27,7 +27,3 @@ export class App {
 }
 
 const app = new App();
-
-// window.addEventListener('resize', function (e) {
-//   app.eventBus.sendResize();
-// }, false);
