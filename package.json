@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --content-base dist/ --mode development",
     "start-scrape": "ts-node src/scripts/scraper/scraper.ts",
-    "start-parse": "ts-node src/scripts/parser/parser.ts",
+    "start-enrich": "ts-node src/scripts/enricher/enricher.ts",
     "build": "webpack"
   },
   "keywords": [],

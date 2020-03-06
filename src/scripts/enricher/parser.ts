@@ -1,21 +1,20 @@
-import {loadGeojson, loadPointsGivenTo, loadResultsOf} from "../io";
+import {loadPointsGivenTo, loadResultsOf} from "../io";
 import {parse as _htmlParse} from 'node-html-parser';
 import {AllPointsGivenTo, AllPointsGivenToCollection, Country, PointsGivenTo, ResultsOf} from "../../types";
 import {allYears} from "../config";
 
 let htmlParse: any = _htmlParse;
 
-class Parser {
+export class Parser {
 
-  public parse() {
-    let geojson = loadGeojson();
+  public parse(): AllPointsGivenToCollection {
     let allPointsGivenToCollection: AllPointsGivenToCollection = {};
     allYears.forEach((year) => {
       console.log(year, "...");
       const resultsOf: ResultsOf = this.parseResultsOf(year);
       this.parsePointsGivenTo(year, resultsOf, allPointsGivenToCollection);
     });
-    //console.log(JSON.stringify(allPointsGivenToCollection));
+    return allPointsGivenToCollection;
   }
 
   private parsePointsGivenTo(year: number, resultsOf: ResultsOf, allPointsGivenToCollection: AllPointsGivenToCollection): void {
@@ -47,12 +46,11 @@ class Parser {
         juryPoints: pointsGivenTo
       };
 
-      if(allPointsGivenToCollection[country] == null){
+      if (allPointsGivenToCollection[country] == null) {
         //initial timeseries
         allPointsGivenToCollection[country] = {}
       }
       allPointsGivenToCollection[country][year] = newAllPointsGivenTo;
-
 
     });
 
@@ -79,5 +77,3 @@ class Parser {
   }
 
 }
-
-new Parser().parse();

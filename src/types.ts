@@ -2,6 +2,7 @@ export type CountryProperties = {
   NAME: string;
   ADM0_A3: string;
   ISO_A2: string;
+  esc: AllPointsGivenTotimeseries
 }
 
 export const enum Country {
