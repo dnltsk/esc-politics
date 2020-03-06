@@ -1,6 +1,6 @@
 import {loadGeojson, loadPointsGivenTo, loadResultsOf} from "../io";
 import {parse as _htmlParse} from 'node-html-parser';
-import {AllPointsGivenTo, AllPointsGivenToCollection, Country, PointsGivenTo} from "../../types";
+import {AllPointsGivenTo, AllPointsGivenToCollection, Country, PointsGivenTo, ResultsOf} from "../../types";
 import {allYears} from "../config";
 
 let htmlParse: any = _htmlParse;
@@ -12,14 +12,14 @@ class Parser {
     let allPointsGivenToCollection: AllPointsGivenToCollection = {};
     allYears.forEach((year) => {
       console.log(year, "...");
-      const resultPointsGivenTo: PointsGivenTo = this.parseResultsOf(year);
-      this.parsePointsGivenTo(year, resultPointsGivenTo, allPointsGivenToCollection);
+      const resultsOf: ResultsOf = this.parseResultsOf(year);
+      this.parsePointsGivenTo(year, resultsOf, allPointsGivenToCollection);
     });
     console.log(JSON.stringify(allPointsGivenToCollection));
   }
 
-  private parsePointsGivenTo(year: string, resultPointsGivenTo: PointsGivenTo, allPointsGivenToCollection: AllPointsGivenToCollection): void {
-    Object.keys(resultPointsGivenTo).forEach((country: Country) => {
+  private parsePointsGivenTo(year: string, resultsOf: ResultsOf, allPointsGivenToCollection: AllPointsGivenToCollection): void {
+    Object.keys(resultsOf.points).forEach((country: Country) => {
 
       let pointsGivenToDocument = htmlParse(loadPointsGivenTo(year, country));
 
@@ -37,12 +37,13 @@ class Parser {
       });
 
       //verity sum
-      if (resultPointsGivenTo[country] != resultPointsGivenTo[country]) {
-        console.error(year, " ", country, "resultPointsGivenTo=", resultPointsGivenTo[country], " sum=", sum);
+      if (resultsOf[country] != resultsOf[country]) {
+        console.error(year, " ", country, "resultsOf=", resultsOf[country], " sum=", sum);
       }
 
       let newAllPointsGivenTo: AllPointsGivenTo = {
-        sumPoints: sum,
+        sumPoints: resultsOf.points[country],
+        place: resultsOf.places[country],
         juryPoints: pointsGivenTo
       };
 
@@ -57,8 +58,11 @@ class Parser {
 
   }
 
-  private parseResultsOf(year: string): PointsGivenTo {
-    let result: PointsGivenTo = {};
+  private parseResultsOf(year: string): ResultsOf {
+    let result: ResultsOf = {
+      points: {},
+      places: {}
+    };
 
     let resultsOf = loadResultsOf(year);
     let resultsOfRoot = htmlParse(resultsOf);
@@ -66,8 +70,10 @@ class Parser {
 
     rows.forEach((cn) => {
       let country: Country = cn.querySelector("img").getAttribute("src").substr(8, 2);
+      let place: number = parseInt(cn.querySelectorAll("td")[0].text.trim());
       let points: number = parseInt(cn.querySelectorAll("td")[1].text.trim());
-      result[country] = points;
+      result.points[country] = points;
+      result.places[country] = place;
     });
     return result;
   }
