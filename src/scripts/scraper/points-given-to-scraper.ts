@@ -1,6 +1,6 @@
 import fetch, {Response} from 'node-fetch'
-import * as fs from "fs";
-import {Scraper} from "./scraper";
+import {writePointsGivenTo} from "../io";
+import {allTelevoteYears} from "../config";
 
 export class PointsGiventoScraper {
   public async scrape(allYears: Array<string>, allCountries: Array<string>) {
@@ -18,28 +18,16 @@ export class PointsGiventoScraper {
           continue;
         }
 
-        this.writeFile(year, country, content);
-
+        writePointsGivenTo(year, country, content);
       }
     }
 
     return null;
   }
 
-  private writeFile(year: string, country: string, content: string): void {
-    let dir = "eschome/" + year;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-
-    let filename = dir + "/points-given-to-" + country + ".html";
-    fs.writeFileSync(filename, content);
-    console.log("    " + filename)
-  }
-
   private async loadContent(country: string, year: string): Promise<string> {
     let url = "https://eschome.net/databaseoutput206.php";
-    if (Scraper.allTelevoteYears.indexOf(year) != -1) {
+    if (allTelevoteYears.indexOf(year) != -1) {
       url = "https://eschome.net/databaseoutput232.php";
     }
     return await fetch(url, {

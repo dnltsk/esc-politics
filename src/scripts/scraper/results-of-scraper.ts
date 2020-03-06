@@ -1,5 +1,5 @@
 import fetch, {Response} from 'node-fetch'
-import * as fs from "fs";
+import {writeResultsOf} from "../io";
 
 export class ResultsOfScraper {
   public async scrape(allYears: Array<string>) {
@@ -11,22 +11,12 @@ export class ResultsOfScraper {
       console.log(year + ", processing..");
       const content = await this.loadContent(year);
 
-      this.writeFile(year, content);
+      writeResultsOf(year, content);
     }
 
     return null;
   }
 
-  private writeFile(year: string, content: string) {
-    let dir = "eschome/" + year;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-
-    let filename = dir + "/results-of.html";
-    fs.writeFileSync(filename, content);
-    console.log("    " + filename)
-  }
 
   private async loadContent(year: string) {
     return await fetch("https://eschome.net/databaseoutput201.php", {
