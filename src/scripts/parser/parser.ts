@@ -15,10 +15,10 @@ class Parser {
       const resultsOf: ResultsOf = this.parseResultsOf(year);
       this.parsePointsGivenTo(year, resultsOf, allPointsGivenToCollection);
     });
-    console.log(JSON.stringify(allPointsGivenToCollection));
+    //console.log(JSON.stringify(allPointsGivenToCollection));
   }
 
-  private parsePointsGivenTo(year: string, resultsOf: ResultsOf, allPointsGivenToCollection: AllPointsGivenToCollection): void {
+  private parsePointsGivenTo(year: number, resultsOf: ResultsOf, allPointsGivenToCollection: AllPointsGivenToCollection): void {
     Object.keys(resultsOf.points).forEach((country: Country) => {
 
       let pointsGivenToDocument = htmlParse(loadPointsGivenTo(year, country));
@@ -58,7 +58,7 @@ class Parser {
 
   }
 
-  private parseResultsOf(year: string): ResultsOf {
+  private parseResultsOf(year: number): ResultsOf {
     let result: ResultsOf = {
       points: {},
       places: {}

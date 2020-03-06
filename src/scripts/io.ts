@@ -9,26 +9,26 @@ export function loadGeojson(): FeatureCollection<Polygon, CountryProperties> {
   return JSON.parse(rawContent);
 }
 
-export function loadPointsGivenTo(year: string, country: string): string {
+export function loadPointsGivenTo(year: number, country: string): string {
   return fs.readFileSync("eschome/" + year + "/points-given-to-" + country + ".html", {
     encoding: "utf8"
   });
 }
 
-export function writePointsGivenTo(year: string, country: string, content: string) {
+export function writePointsGivenTo(year: number, country: string, content: string) {
   let dir = "eschome/" + year;
   verifyDir(dir);
   let filename = dir + "/points-given-to-" + country + ".html";
   fs.writeFileSync(filename, content);
 }
 
-export function loadResultsOf(year: string) {
+export function loadResultsOf(year: number) {
   return fs.readFileSync("eschome/" + year + "/results-of.html", {
     encoding: "utf8"
   });
 }
 
-export function writeResultsOf(year: string, content: string) {
+export function writeResultsOf(year: number, content: string) {
   let dir = "eschome/" + year;
   verifyDir(dir);
   let filename = dir + "/results-of.html";

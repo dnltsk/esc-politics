@@ -1,9 +1,9 @@
 import fetch, {Response} from 'node-fetch'
 import {writePointsGivenTo} from "../io";
-import {allTelevoteYears} from "../config";
+import {finalsSince} from "../config";
 
 export class PointsGiventoScraper {
-  public async scrape(allYears: Array<string>, allCountries: Array<string>) {
+  public async scrape(allYears: Array<number>, allCountries: Array<string>) {
     console.log("start.");
 
     for (const year of allYears) {
@@ -21,18 +21,19 @@ export class PointsGiventoScraper {
         writePointsGivenTo(year, country, content);
       }
     }
-
     return null;
   }
 
-  private async loadContent(country: string, year: string): Promise<string> {
+  private async loadContent(country: string, year: number): Promise<string> {
     let url = "https://eschome.net/databaseoutput206.php";
-    if (allTelevoteYears.indexOf(year) != -1) {
+    let yearParameter: string = year.toString();
+    if (year >= finalsSince) {
       url = "https://eschome.net/databaseoutput232.php";
+      yearParameter = year + "F";
     }
     return await fetch(url, {
         method: "POST",
-        body: "land=" + country + "&jahr=" + year,
+        body: "land=" + country + "&jahr=" + yearParameter,
         headers: {
           "Content-type": "application/x-www-form-urlencoded"
         }
