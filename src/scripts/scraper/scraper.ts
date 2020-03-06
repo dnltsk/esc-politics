@@ -1,13 +1,14 @@
 import {PointsGiventoScraper} from "./points-given-to-scraper";
-import {allCountries, allTelevoteYears} from "../config";
+import {allCountries, allYears} from "../config";
 import {loadGeojson} from "../io";
+import {ResultsOfScraper} from "./results-of-scraper";
 
 export class Scraper {
 
 
   public scrape() {
-    new PointsGiventoScraper().scrape(allTelevoteYears, allCountries);
-    //new ResultsOfScraper().scrape(allYears);
+    new PointsGiventoScraper().scrape(allYears, allCountries);
+    new ResultsOfScraper().scrape(allYears);
   }
 
   public verifyCountries() {
