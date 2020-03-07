@@ -24,11 +24,15 @@ export class Map {
 
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
-  constructor(eventBus: EventBus, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>, selectedYear: number) {
+  constructor(
+    eventBus: EventBus,
+    mapData: FeatureCollection<Polygon, CountryProperties>,
+    targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>,
+    initialYear: number) {
     this.eventBus = eventBus;
     this.mapData = mapData;
     this.targetElement = targetElement;
-    this.selectedYear = selectedYear;
+    this.selectedYear = initialYear;
     this.selectedCountry = Country.DE;
     this.initMap();
   }
@@ -104,7 +108,7 @@ export class Map {
       .append("path")
       .classed("country", true)
       .style("fill", (d) => {
-        if(d.properties.ISO_A2 === this.selectedCountry){
+        if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
         if (
@@ -136,7 +140,7 @@ export class Map {
       .enter()
       .selectAll("path")
       .style("fill", (d: Feature<Polygon, CountryProperties>) => {
-        if(d.properties.ISO_A2 === this.selectedCountry){
+        if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
         if (

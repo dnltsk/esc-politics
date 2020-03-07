@@ -1,9 +1,11 @@
 import {Map} from "./map";
 import {Country} from "./types";
+import {Controls} from "./controls";
 
 export class EventBus{
 
   public maps: Array<Map>;
+  public controls: Controls;
 
   constructor() {
   }
@@ -39,6 +41,7 @@ export class EventBus{
   }
 
   sendYear(year: number) {
+    this.controls.receiveYear(year);
     this.maps.forEach((map) => {
       map.receiveYear(year);
     });
