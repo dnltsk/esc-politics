@@ -1,7 +1,7 @@
 import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
-import {Country, CountryProperties} from "./types";
+import {CountryCode, CountryProperties, EscTimeseries} from "./types";
 import {EventBus} from "./event-bus";
 
 export class Map {
@@ -18,22 +18,25 @@ export class Map {
 
   eventBus: EventBus;
   mapData: FeatureCollection<Polygon, CountryProperties>;
+  escTimeseries: EscTimeseries;
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
   selectedYear: number;
-  selectedCountry: Country;
+  selectedCountry: CountryCode;
 
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
   constructor(
     eventBus: EventBus,
     mapData: FeatureCollection<Polygon, CountryProperties>,
+    escTimeseries: EscTimeseries,
     targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>,
     initialYear: number) {
     this.eventBus = eventBus;
     this.mapData = mapData;
+    this.escTimeseries = escTimeseries;
     this.targetElement = targetElement;
     this.selectedYear = initialYear;
-    this.selectedCountry = Country.DE;
+    this.selectedCountry = CountryCode.DE;
     this.initMap();
   }
 
@@ -47,13 +50,13 @@ export class Map {
     this.redrawMap();
   }
 
-  public receiveMouseover(ISO_A2: Country) {
+  public receiveMouseover(ISO_A2: CountryCode) {
     this.g.selectAll("." + ISO_A2).classed("selected", true);
     this.selectedCountry = ISO_A2;
     this.redrawMap();
   }
 
-  public receiveMouseout(ISO_A2: Country) {
+  public receiveMouseout(ISO_A2: CountryCode) {
     this.g.selectAll("." + ISO_A2).classed("selected", false);
     //this.selectedCountry = null
   }
@@ -108,18 +111,14 @@ export class Map {
       .append("path")
       .classed("country", true)
       .style("fill", (d) => {
+        if(Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1){
+          return "grey";
+        }
         if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
-        if (
-          d.properties.esc !== undefined
-          && d.properties.esc[this.selectedYear.toString()] !== undefined
-          && d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry] !== undefined) {
-          return this.pointsColorScale(d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry]);
-        }
-        else {
-          return "grey";
-        }
+        const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
+        return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
       })
       .each(function (d) {
         this.classList.add(d.properties.ISO_A2);
@@ -140,18 +139,14 @@ export class Map {
       .enter()
       .selectAll("path")
       .style("fill", (d: Feature<Polygon, CountryProperties>) => {
+        if(Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1){
+          return "grey";
+        }
         if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
-        if (
-          d.properties.esc !== undefined
-          && d.properties.esc[this.selectedYear.toString()] !== undefined
-          && d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry] !== undefined) {
-          return this.pointsColorScale(d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry]);
-        }
-        else {
-          return "grey";
-        }
+        const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
+        return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
       });
   }
 

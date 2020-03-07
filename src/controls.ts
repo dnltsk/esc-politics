@@ -2,38 +2,39 @@ import * as d3 from "d3";
 import {allYears} from "./scripts/config";
 import {EventBus} from "./event-bus";
 import {FeatureCollection, Polygon} from "geojson";
-import {CountryProperties} from "./types";
+import {CountryCode, CountryProperties, EscTimeseries} from "./types";
 
 export class Controls {
 
   eventBus: EventBus;
-  mapData: FeatureCollection<Polygon, CountryProperties>
+  mapData: FeatureCollection<Polygon, CountryProperties>;
+  escTimeseries: EscTimeseries;
 
-  constructor(eventBus: EventBus, mapData: FeatureCollection<Polygon, CountryProperties>, initialYear: number) {
+  constructor(eventBus: EventBus,
+    mapData: FeatureCollection<Polygon, CountryProperties>,
+    escTimeseries: EscTimeseries,
+    initialYear: number) {
     this.eventBus = eventBus;
     this.mapData = mapData;
+    this.escTimeseries = escTimeseries;
+
     this.initControlls(initialYear);
   }
 
   public receiveYear(year: number) {
-    let sum = this.mapData.features
-      .filter(f => f.properties.esc != null && f.properties.esc[year] != null && f.properties.esc[year].juryPoints != [])
-      .map(f => {
-        console.log(<number[]>Object.values(f.properties.esc[year].juryPoints));
-        return {
-          ISO_A2: f.properties.ISO_A2,
-          points: (<number[]>Object.values(f.properties.esc[year].juryPoints)).reduce((sum, current) => sum + current)
-        }
-      });
-    console.log(sum);
+
+    let topTen = Object.keys(this.escTimeseries[year].countries)
+      .sort((country: CountryCode) => this.escTimeseries[year].countries[country].points)
+      .map((country: CountryCode) => this.escTimeseries[year].countries[country])
+      .slice(0, 9 + 1);
 
     d3.select("#yearStats")
       .selectAll("span")
-      .data(sum)
+      .data(topTen)
       .enter()
       .append("span")
       .text((d, i, n) => {
-        return (i + 1) + ". " + d.ISO_A2 + ": " + d.points + " ";
+        return (i + 1) + ". " + d.countryCode + ": " + d.points + " ";
       })
 
   }

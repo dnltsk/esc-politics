@@ -1,5 +1,5 @@
 import {Map} from "./map";
-import {Country} from "./types";
+import {CountryCode} from "./types";
 import {Controls} from "./controls";
 
 export class EventBus{
@@ -16,13 +16,13 @@ export class EventBus{
     })
   }
 
-  sendMouseover(ISO_A2: Country) {
+  sendMouseover(ISO_A2: CountryCode) {
     this.maps.forEach((map) => {
       map.receiveMouseover(ISO_A2);
     });
   }
 
-  sendMouseout(ISO_A2: Country) {
+  sendMouseout(ISO_A2: CountryCode) {
     this.maps.forEach((map) => {
       map.receiveMouseout(ISO_A2);
     });
