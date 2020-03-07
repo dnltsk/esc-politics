@@ -138,3 +138,7 @@ text.big-text {
 .effect-layer text, text.dummy-text {
   font-size: 12px;
 }
+
+.slider {
+  height: auto;
+}

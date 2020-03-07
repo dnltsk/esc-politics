@@ -1,7 +1,7 @@
 import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
-import {CountryProperties} from "./types";
+import {Country, CountryProperties} from "./types";
 import {EventBus} from "./event-bus";
 
 export class Map {
@@ -14,15 +14,22 @@ export class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
+  readonly pointsColorScale = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 12]);
+
   eventBus: EventBus;
   mapData: FeatureCollection<Polygon, CountryProperties>;
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
+  selectedYear: number;
+  selectedCountry: Country;
+
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
-  constructor(eventBus: EventBus, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>) {
+  constructor(eventBus: EventBus, mapData: FeatureCollection<Polygon, CountryProperties>, targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>, selectedYear: number) {
     this.eventBus = eventBus;
     this.mapData = mapData;
     this.targetElement = targetElement;
+    this.selectedYear = selectedYear;
+    this.selectedCountry = Country.DE;
     this.initMap();
   }
 
@@ -33,22 +40,21 @@ export class Map {
 
     fitToMap(this.path, this.projection, this.mapData, innerWidth, innerHeight);
 
-    this.g.selectAll("countries")
-      .data(this.mapData.features)
-      .enter()
-      .selectAll("path")
-      .attr("d", this.path);
+    this.redrawMap();
   }
 
-  public receiveMouseover(ADM0_A3: string) {
-    this.g.selectAll("." + ADM0_A3).classed("selected", true);
+  public receiveMouseover(ISO_A2: Country) {
+    this.g.selectAll("." + ISO_A2).classed("selected", true);
+    this.selectedCountry = ISO_A2;
+    this.redrawMap();
   }
 
-  public receiveMouseout(ADM0_A3: string) {
-    this.g.selectAll("." + ADM0_A3).classed("selected", false);
+  public receiveMouseout(ISO_A2: Country) {
+    this.g.selectAll("." + ISO_A2).classed("selected", false);
+    //this.selectedCountry = null
   }
 
-  public receiveZoom(scale: number, translate: [number, number]){
+  public receiveZoom(scale: number, translate: [number, number]) {
     this.projection
       .scale(scale)
       .translate(translate);
@@ -58,6 +64,11 @@ export class Map {
   public receiveDrag(translate: [number, number]) {
     this.projection.translate(translate);
     this.g.selectAll("path").attr("d", this.path);
+  }
+
+  public receiveYear(year: number) {
+    this.selectedYear = year;
+    this.redrawMap();
   }
 
   private initMap() {
@@ -92,8 +103,22 @@ export class Map {
       .enter()
       .append("path")
       .classed("country", true)
+      .style("fill", (d) => {
+        if(d.properties.ISO_A2 === this.selectedCountry){
+          return "black";
+        }
+        if (
+          d.properties.esc !== undefined
+          && d.properties.esc[this.selectedYear.toString()] !== undefined
+          && d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry] !== undefined) {
+          return this.pointsColorScale(d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry]);
+        }
+        else {
+          return "grey";
+        }
+      })
       .each(function (d) {
-        this.classList.add(d.properties.ADM0_A3);
+        this.classList.add(d.properties.ISO_A2);
       })
       .attr("d", this.path)
       .on("mouseover", (d, i, n) => {
@@ -104,12 +129,34 @@ export class Map {
       });
   }
 
+  private redrawMap() {
+    console.log("redrawMap");
+    this.g.selectAll("countries")
+      .data(this.mapData.features)
+      .enter()
+      .selectAll("path")
+      .style("fill", (d: Feature<Polygon, CountryProperties>) => {
+        if(d.properties.ISO_A2 === this.selectedCountry){
+          return "black";
+        }
+        if (
+          d.properties.esc !== undefined
+          && d.properties.esc[this.selectedYear.toString()] !== undefined
+          && d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry] !== undefined) {
+          return this.pointsColorScale(d.properties.esc[this.selectedYear.toString()].juryPoints[this.selectedCountry]);
+        }
+        else {
+          return "grey";
+        }
+      });
+  }
+
   private localMouseover(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    this.eventBus.sendMouseover(geom.properties.ADM0_A3);
+    this.eventBus.sendMouseover(geom.properties.ISO_A2);
   }
 
   private localMouseout(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    this.eventBus.sendMouseout(geom.properties.ADM0_A3);
+    this.eventBus.sendMouseout(geom.properties.ISO_A2);
   }
 
   private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
@@ -140,5 +187,4 @@ export class Map {
     const translate: [number, number] = [currTranslate[0] + d3.event.dx, currTranslate[1] + d3.event.dy];
     this.eventBus.sendDrag(translate);
   }
-
 }

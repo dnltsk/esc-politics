@@ -1,4 +1,5 @@
 import {Map} from "./map";
+import {Country} from "./types";
 
 export class EventBus{
 
@@ -13,15 +14,15 @@ export class EventBus{
     })
   }
 
-  sendMouseover(ADM0_A3: string) {
+  sendMouseover(ISO_A2: Country) {
     this.maps.forEach((map) => {
-      map.receiveMouseover(ADM0_A3);
+      map.receiveMouseover(ISO_A2);
     });
   }
 
-  sendMouseout(ADM0_A3: string) {
+  sendMouseout(ISO_A2: Country) {
     this.maps.forEach((map) => {
-      map.receiveMouseout(ADM0_A3);
+      map.receiveMouseout(ISO_A2);
     });
   }
 
@@ -37,4 +38,9 @@ export class EventBus{
     });
   }
 
+  sendYear(year: number) {
+    this.maps.forEach((map) => {
+      map.receiveYear(year);
+    });
+  }
 }
