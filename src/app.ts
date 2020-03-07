@@ -8,23 +8,29 @@ import {Controls} from "./controls";
 export class App {
 
   eventBus: EventBus;
+  mapData: FeatureCollection<Polygon, CountryProperties>;
   initialYear = 2014;
 
   constructor() {
-    this.eventBus = new EventBus();
-
-    d3.json("data/esc-countries-enriched.geojson").then((mapData: FeatureCollection<Polygon, CountryProperties>) => {
-      console.log("LOADED!", mapData);
-      this.eventBus.controls = new Controls(this.eventBus, mapData, this.initialYear);
-      this.initMaps(mapData);
+    this.fetchData().then(() => {
+      this.eventBus = new EventBus();
+      this.eventBus.controls = new Controls(this.eventBus, this.mapData, this.initialYear);
+      this.initMaps();
     });
   }
 
-  private initMaps(mapData: FeatureCollection<Polygon, CountryProperties>) {
-    const ul = new Map(this.eventBus, mapData, d3.select(".ul-map"), this.initialYear);
-    const ur = new Map(this.eventBus, mapData, d3.select(".ur-map"), this.initialYear);
-    const ll = new Map(this.eventBus, mapData, d3.select(".ll-map"), this.initialYear);
-    const lr = new Map(this.eventBus, mapData, d3.select(".lr-map"), this.initialYear);
+  async fetchData() {
+    await d3.json("data/esc-countries-enriched.geojson").then((mapData: FeatureCollection<Polygon, CountryProperties>) => {
+      console.log("LOADED!", mapData);
+      this.mapData = mapData
+    });
+  }
+
+  private initMaps() {
+    const ul = new Map(this.eventBus, this.mapData, d3.select(".ul-map"), this.initialYear);
+    const ur = new Map(this.eventBus, this.mapData, d3.select(".ur-map"), this.initialYear);
+    const ll = new Map(this.eventBus, this.mapData, d3.select(".ll-map"), this.initialYear);
+    const lr = new Map(this.eventBus, this.mapData, d3.select(".lr-map"), this.initialYear);
     this.eventBus.maps = [ul, ur, ll, lr];
   }
 
