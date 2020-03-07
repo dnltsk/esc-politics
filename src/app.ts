@@ -15,7 +15,7 @@ export class App {
   constructor() {
     this.fetchData().then(() => {
       this.eventBus = new EventBus();
-      this.eventBus.controls = new Controls(this.eventBus, this.mapData, this.escTimeseries, this.initialYear);
+      this.eventBus.controls = new Controls(this.eventBus, this.escTimeseries, this.initialYear);
       this.initMaps();
     });
   }
