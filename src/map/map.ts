@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryCode, CountryProperties, EscTimeseries} from "../types";
 import {EventBus} from "../event-bus";
+import {separatePointsSince} from "../scripts/config";
 
 export abstract class Map {
 
@@ -39,9 +40,41 @@ export abstract class Map {
     this.initMap();
   }
 
+  abstract isMapDisplayed(year: number): boolean
+
+  abstract isCountryRelevant(d: Feature<Polygon, CountryProperties>):boolean;
+
   abstract getFillColor(d: Feature<Polygon, CountryProperties>): string
 
-  abstract isMapDisplayed(year: number): boolean
+  protected getColorScale(): d3.ScaleSequential<string> {
+    if (this.selectedYear <= separatePointsSince) {
+      return this.fillColorScale12;
+    }
+    return this.fillColorScale24;
+  }
+
+  private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
+    d3.event.preventDefault();//lock body scroll
+    const ZOOM_FACTOR = 0.000005;
+    const ZOOM_IN_LIMIT = 0.001;
+    const ZOOM_OUT_LIMIT = 0.00006;
+    const currScale = this.projection.scale();
+    let newScale = currScale - ZOOM_FACTOR * d3.event.deltaY;
+    if (d3.event.deltaY < 0) {
+      newScale = Math.min(ZOOM_IN_LIMIT, newScale);
+    }
+    else {
+      newScale = Math.max(ZOOM_OUT_LIMIT, newScale);
+    }
+    const currTranslate = this.projection.translate();
+    const coords = this.projection.invert([d3.event.offsetX, d3.event.offsetY]);
+    this.projection.scale(newScale);
+    const newPos = this.projection(coords);
+
+    const translate: [number, number] = [currTranslate[0] + (d3.event.offsetX - newPos[0]), currTranslate[1] + (d3.event.offsetY - newPos[1])];
+
+    this.eventBus.sendZoom(newScale, translate);
+  }
 
   private initMap() {
 
@@ -76,7 +109,7 @@ export abstract class Map {
       .append("path")
       .classed("country", true)
       .style("fill", (d) => {
-        if (Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1) {
+        if (!this.isCountryRelevant(d)) {
           return "grey";
         }
         if (d.properties.ISO_A2 === this.selectedCountry) {
@@ -93,23 +126,6 @@ export abstract class Map {
       })
       .on("mouseout", (d, i, n) => {
         this.localMouseout(d, d3.select(n[i]));
-      });
-  }
-
-  private redrawMap() {
-    console.log("redrawMap");
-    this.g.selectAll("countries")
-      .data(this.mapData.features)
-      .enter()
-      .selectAll("path")
-      .style("fill", (d: Feature<Polygon, CountryProperties>) => {
-        if (Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1) {
-          return "grey";
-        }
-        if (d.properties.ISO_A2 === this.selectedCountry) {
-          return "black";
-        }
-        return this.getFillColor(d);
       });
   }
 
@@ -134,6 +150,23 @@ export abstract class Map {
     this.redrawMap();
   }
 
+  private redrawMap() {
+    console.log("redrawMap");
+    this.g.selectAll("countries")
+      .data(this.mapData.features)
+      .enter()
+      .selectAll("path")
+      .style("fill", (d: Feature<Polygon, CountryProperties>) => {
+        if (!this.isCountryRelevant(d)) {
+          return "grey";
+        }
+        if (d.properties.ISO_A2 === this.selectedCountry) {
+          return "black";
+        }
+        return this.getFillColor(d);
+      });
+  }
+
   public receiveMouseover(ISO_A2: CountryCode) {
     this.g.selectAll("." + ISO_A2).classed("selected", true);
     this.selectedCountry = ISO_A2;
@@ -156,42 +189,12 @@ export abstract class Map {
     this.g.selectAll("path").attr("d", this.path);
   }
 
-  protected getColorScale(): d3.ScaleSequential<string> {
-    if (this.selectedYear <= 2016) {
-      return this.fillColorScale12;
-    }
-    return this.fillColorScale24;
-  }
-
   private localMouseover(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
     this.eventBus.sendMouseover(geom.properties.ISO_A2);
   }
 
   private localMouseout(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {
     this.eventBus.sendMouseout(geom.properties.ISO_A2);
-  }
-
-  private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
-    d3.event.preventDefault();//lock body scroll
-    const ZOOM_FACTOR = 0.000005;
-    const ZOOM_IN_LIMIT = 0.001;
-    const ZOOM_OUT_LIMIT = 0.00006;
-    const currScale = this.projection.scale();
-    let newScale = currScale - ZOOM_FACTOR * d3.event.deltaY;
-    if (d3.event.deltaY < 0) {
-      newScale = Math.min(ZOOM_IN_LIMIT, newScale);
-    }
-    else {
-      newScale = Math.max(ZOOM_OUT_LIMIT, newScale);
-    }
-    const currTranslate = this.projection.translate();
-    const coords = this.projection.invert([d3.event.offsetX, d3.event.offsetY]);
-    this.projection.scale(newScale);
-    const newPos = this.projection(coords);
-
-    const translate: [number, number] = [currTranslate[0] + (d3.event.offsetX - newPos[0]), currTranslate[1] + (d3.event.offsetY - newPos[1])];
-
-    this.eventBus.sendZoom(newScale, translate);
   }
 
   private drag(g: d3.Selection<Element, {}, HTMLElement, any>) {

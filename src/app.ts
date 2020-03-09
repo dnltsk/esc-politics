@@ -6,6 +6,7 @@ import {Controls} from "./controls";
 import {ReceivedCompleteMap} from "./map/received-complete-map";
 import {ReceivedJuryMap} from "./map/received-jury-map";
 import {ReceivedTeleMap} from "./map/received-tele-map";
+import {GivenCompleteMap} from "./map/given-complete-map";
 
 export class App {
 
@@ -34,7 +35,7 @@ export class App {
   }
 
   private initMaps() {
-    const ul = new ReceivedCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map"), this.initialYear);
+    const ul = new GivenCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map"), this.initialYear);
     const ur = new ReceivedCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ur-map"), this.initialYear);
     const ll = new ReceivedJuryMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ll-map"), this.initialYear);
     const lr = new ReceivedTeleMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lr-map"), this.initialYear);

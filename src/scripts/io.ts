@@ -2,6 +2,19 @@ import * as fs from "fs";
 import {FeatureCollection, Polygon} from "geojson";
 import {CountryProperties} from "../types";
 
+export function loadParticipants(year: number) {
+  return fs.readFileSync("eschome/" + year + "/participants.html", {
+    encoding: "utf8"
+  });
+}
+
+export function writeParticipants(year: number, content: string) {
+  let dir = "eschome/" + year;
+  verifyDir(dir);
+  let filename = dir + "/participants.html";
+  fs.writeFileSync(filename, content);
+}
+
 export function loadGeojson(): FeatureCollection<Polygon, CountryProperties> {
   let rawContent = fs.readFileSync("dist/data/esc-countries.geojson", {
     encoding: "utf8"

@@ -1,6 +1,6 @@
-import {loadPointsGivenTo, loadResultsOf} from "../io";
+import {loadParticipants, loadPointsGivenTo, loadResultsOf} from "../io";
 import {parse as _htmlParse} from 'node-html-parser';
-import {allYears} from "../config";
+import {allYears, separatePointsSince} from "../config";
 import {CountryCode, CountryMap, EscTimeseries, PointsReceivedMap} from "../../types";
 
 let htmlParse: any = _htmlParse;
@@ -15,7 +15,8 @@ export class Parser {
       const countryMap: CountryMap = this.parseResultsOf(year);
       this.parsePointsGivenTo(year, countryMap);
       escTimeseries[year] = {
-        countries: countryMap
+        countries: countryMap,
+        participants: this.parseParticipants(year)
       }
     });
     return escTimeseries;
@@ -34,14 +35,14 @@ export class Parser {
       rows.forEach((cn) => {
         let sourceCountry: CountryCode = cn.querySelector("img").getAttribute("src").substr(8, 2);
         completePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[2].text.trim());
-        if (year >= 2016) {
+        if (year >= separatePointsSince) {
           juryPointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[3].text.trim());
           telePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[4].text.trim());
         }
       });
 
       countryMap[country].completePointsReceived = completePointsReceived;
-      if (year >= 2016) {
+      if (year >= separatePointsSince) {
         countryMap[country].juryPointsReceived = juryPointsReceived;
         countryMap[country].telePointsReceived = telePointsReceived;
       }
@@ -69,4 +70,15 @@ export class Parser {
     return result;
   }
 
+  private parseParticipants(year: number): CountryCode[] {
+    let participants = loadParticipants(year);
+    let participantsRoot = htmlParse(participants);
+    let rows: Array<any> = participantsRoot.querySelector("#tabelle1").querySelectorAll(".tr_output_tabelle_1, .tr_output_tabelle_2");
+
+    let result: CountryCode[] = [];
+    rows.forEach((cn) => {
+      result.push(cn.querySelector("img").getAttribute("src").substr(8, 2));
+    });
+    return result;
+  }
 }

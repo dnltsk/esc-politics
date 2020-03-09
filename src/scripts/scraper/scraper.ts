@@ -1,14 +1,14 @@
-import {PointsGiventoScraper} from "./points-given-to-scraper";
 import {allCountries, allYears} from "../config";
 import {loadGeojson} from "../io";
-import {ResultsOfScraper} from "./results-of-scraper";
+import {ParticipantsScraper} from "./participants-scraper";
 
 export class Scraper {
 
 
   public scrape() {
-    new PointsGiventoScraper().scrape(allYears, allCountries);
-    new ResultsOfScraper().scrape(allYears);
+    new ParticipantsScraper().scrape(allYears);
+    //new ResultsOfScraper().scrape(allYears);
+    //new PointsGiventoScraper().scrape(allYears, allCountries);
   }
 
   public verifyCountries() {
@@ -29,6 +29,5 @@ export class Scraper {
   }
 }
 
-//new Scraper().scrape();
-new Scraper().verifyCountries();
+new Scraper().scrape();
 
