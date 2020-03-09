@@ -6,14 +6,8 @@ import {separatePointsSince} from "../scripts/config";
 export class ReceivedTeleMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
-    const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
-    if (countryResult == null
-        || countryResult.telePointsReceived == null
-        || countryResult.telePointsReceived[d.properties.ISO_A2] == null
-        || countryResult.telePointsReceived[d.properties.ISO_A2] == 0) {
-      return "white";
-    }
-    return this.fillColorScale12(countryResult.telePointsReceived[d.properties.ISO_A2]);
+    const receivedPoints = this.escTimeseries[this.selectedYear].countries[this.selectedCountry]?.telePointsReceived[d.properties.ISO_A2];
+    return this.whiteOrColor(receivedPoints);
   }
 
   isMapDisplayed(year: number): boolean {
@@ -21,10 +15,6 @@ export class ReceivedTeleMap extends Map {
   }
 
   isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean {
-    // if (this.selectedYear >= finalsSince) {
-    //   //only countries from the finals can could get points
-    //   return Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) >= 0;
-    // }
     return this.escTimeseries[this.selectedYear].participants.indexOf(d.properties.ISO_A2) >= 0;
   }
 }

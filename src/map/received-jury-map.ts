@@ -6,14 +6,8 @@ import {separatePointsSince} from "../scripts/config";
 export class ReceivedJuryMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
-    const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
-    if (countryResult == null
-        || countryResult.juryPointsReceived == null
-        || countryResult.juryPointsReceived[d.properties.ISO_A2] == null
-        || countryResult.juryPointsReceived[d.properties.ISO_A2] == 0) {
-      return "white";
-    }
-    return this.fillColorScale12(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+    const receivedPoints = this.escTimeseries[this.selectedYear].countries[this.selectedCountry]?.juryPointsReceived[d.properties.ISO_A2]
+    return this.whiteOrColor(receivedPoints);
   }
 
   isMapDisplayed(year: number): boolean {
@@ -21,10 +15,6 @@ export class ReceivedJuryMap extends Map {
   }
 
   isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean {
-    // if (this.selectedYear >= finalsSince) {
-    //   //only countries from the finals can could get points
-    //   return Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) >= 0;
-    // }
     return this.escTimeseries[this.selectedYear].participants.indexOf(d.properties.ISO_A2) >= 0;
   }
 

@@ -42,7 +42,7 @@ export abstract class Map {
 
   abstract isMapDisplayed(year: number): boolean
 
-  abstract isCountryRelevant(d: Feature<Polygon, CountryProperties>):boolean;
+  abstract isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean;
 
   abstract getFillColor(d: Feature<Polygon, CountryProperties>): string
 
@@ -127,6 +127,13 @@ export abstract class Map {
       .on("mouseout", (d, i, n) => {
         this.localMouseout(d, d3.select(n[i]));
       });
+  }
+
+  protected whiteOrColor(points: number): string {
+    if (points == null || points == 0) {
+      return "white";
+    }
+    return this.getColorScale()(points);
   }
 
   public receiveYear(year: number) {

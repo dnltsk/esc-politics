@@ -1,19 +1,13 @@
 import {Map} from "./map";
 import {Feature, Polygon} from "geojson";
 import {CountryProperties} from "../types";
-import {separatePointsSince} from "../scripts/config";
+import {finalsSince, separatePointsSince} from "../scripts/config";
 
 export class GivenJuryMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
-    const countryResult = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2];
-    if (countryResult == null
-        || countryResult.juryPointsReceived == null
-        || countryResult.juryPointsReceived[this.selectedCountry] == null
-        || countryResult.juryPointsReceived[this.selectedCountry] == 0) {
-      return "white";
-    }
-    return this.fillColorScale12(countryResult.juryPointsReceived[this.selectedCountry]);
+    const givenPoints = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2]?.juryPointsReceived[this.selectedCountry];
+    return this.whiteOrColor(givenPoints);
   }
 
   isMapDisplayed(year: number): boolean {
@@ -21,7 +15,10 @@ export class GivenJuryMap extends Map {
   }
 
   isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean {
-    // all participated countries can give points
+    if (this.selectedYear >= finalsSince) {
+      //only countries from the finals can could get points
+      return Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) >= 0;
+    }
     return this.escTimeseries[this.selectedYear].participants.indexOf(d.properties.ISO_A2) >= 0
   }
 
