@@ -1,7 +1,7 @@
 import {fitToMap, initFitToMap, project} from "./projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
-import {CountryCode, CountryProperties, EscTimeseries} from "./types";
+import {CountryCode, CountryProperties, EscTimeseries, PointDirection} from "./types";
 import {EventBus} from "./event-bus";
 
 export class Map {
@@ -22,6 +22,7 @@ export class Map {
   targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>;
   selectedYear: number;
   selectedCountry: CountryCode;
+  pointDirection: PointDirection;
 
   g: d3.Selection<SVGElement, {}, HTMLElement, any>;
 
@@ -30,13 +31,16 @@ export class Map {
     mapData: FeatureCollection<Polygon, CountryProperties>,
     escTimeseries: EscTimeseries,
     targetElement: d3.Selection<HTMLElement, {}, HTMLElement, any>,
-    initialYear: number) {
+    initialYear: number,
+    pointDirection: PointDirection
+  ) {
     this.eventBus = eventBus;
     this.mapData = mapData;
     this.escTimeseries = escTimeseries;
     this.targetElement = targetElement;
     this.selectedYear = initialYear;
     this.selectedCountry = CountryCode.DE;
+    this.pointDirection = pointDirection;
     this.initMap();
   }
 
@@ -111,14 +115,23 @@ export class Map {
       .append("path")
       .classed("country", true)
       .style("fill", (d) => {
-        if(Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1){
+        if (Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1) {
           return "grey";
         }
         if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
-        const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
-        return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+        switch (this.pointDirection) {
+          case "received": {
+            const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
+            return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+          }
+          case "given":
+          default: {
+            const countryResult = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2];
+            return this.pointsColorScale(countryResult.juryPointsReceived[this.selectedCountry]);
+          }
+        }
       })
       .each(function (d) {
         this.classList.add(d.properties.ISO_A2);
@@ -139,14 +152,23 @@ export class Map {
       .enter()
       .selectAll("path")
       .style("fill", (d: Feature<Polygon, CountryProperties>) => {
-        if(Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1){
+        if (Object.keys(this.escTimeseries[this.selectedYear].countries).indexOf(d.properties.ISO_A2) == -1) {
           return "grey";
         }
         if (d.properties.ISO_A2 === this.selectedCountry) {
           return "black";
         }
-        const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
-        return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+        switch (this.pointDirection) {
+          case "received": {
+            const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
+            return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+          }
+          case "given":
+          default: {
+            const countryResult = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2];
+            return this.pointsColorScale(countryResult.juryPointsReceived[this.selectedCountry]);
+          }
+        }
       });
   }
 

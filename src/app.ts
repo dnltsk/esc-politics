@@ -32,10 +32,10 @@ export class App {
   }
 
   private initMaps() {
-    const ul = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map"), this.initialYear);
-    const ur = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ur-map"), this.initialYear);
-    const ll = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ll-map"), this.initialYear);
-    const lr = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lr-map"), this.initialYear);
+    const ul = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map"), this.initialYear, "received");
+    const ur = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ur-map"), this.initialYear, "given");
+    const ll = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ll-map"), this.initialYear, "received");
+    const lr = new Map(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lr-map"), this.initialYear, "given");
     this.eventBus.maps = [ul, ur, ll, lr];
   }
 
