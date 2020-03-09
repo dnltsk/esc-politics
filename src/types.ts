@@ -29,6 +29,7 @@ export type CountryResult = {
   points: number
   performer: string
   song: string
+  completePointsReceived?: PointsReceivedMap
   juryPointsReceived?: PointsReceivedMap
   telePointsReceived?: PointsReceivedMap
 }

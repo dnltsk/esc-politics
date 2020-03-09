@@ -6,11 +6,14 @@ export class ReceivedJuryMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
     const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
-    return this.pointsColorScale(countryResult.juryPointsReceived[d.properties.ISO_A2]);
+    if(countryResult.juryPointsReceived[d.properties.ISO_A2] == null){
+      super.getColorScale()(0);
+    }
+    return super.getColorScale()(countryResult.juryPointsReceived[d.properties.ISO_A2]);
   }
 
   isMapHidden(year: number): boolean {
-    return false;
+    return year <= 2016;
   }
 
 }

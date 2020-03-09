@@ -11,7 +11,8 @@ export abstract class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
-  readonly pointsColorScale = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 12]);
+  readonly fillColorScale24 = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 24]);
+  readonly fillColorScale12 = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 12]);
 
   eventBus: EventBus;
   mapData: FeatureCollection<Polygon, CountryProperties>;
@@ -110,6 +111,13 @@ export abstract class Map {
         }
         return this.getFillColor(d);
       });
+  }
+
+  protected getColorScale(): d3.ScaleSequential<string>{
+    if(this.selectedYear <= 2016){
+      return this.fillColorScale12;
+    }
+    return this.fillColorScale24;
   }
 
   public receiveResize() {

@@ -27,14 +27,14 @@ export class Parser {
 
       let rows: Array<any> = pointsGivenToDocument.querySelector("#tabelle1").querySelectorAll(".tr_output_tabelle_1, .tr_output_tabelle_2");
 
-      let juryPointsReceived: PointsReceivedMap = {};
+      let completePointsReceived: PointsReceivedMap = {};
       rows.forEach((cn) => {
         let sourceCountry: CountryCode = cn.querySelector("img").getAttribute("src").substr(8, 2);
         let points = parseInt(cn.querySelectorAll("td")[2].text.trim());
-        juryPointsReceived[sourceCountry] = points;
+        completePointsReceived[sourceCountry] = points;
       });
 
-      countryMap[country].juryPointsReceived = juryPointsReceived;
+      countryMap[country].completePointsReceived = completePointsReceived;
     });
 
   }
