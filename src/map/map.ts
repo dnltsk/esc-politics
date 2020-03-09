@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
 import {CountryCode, CountryProperties, EscTimeseries} from "../types";
 import {EventBus} from "../event-bus";
-import {separatePointsSince} from "../scripts/config";
+import {separatedPointsSince} from "../scripts/config";
 
 export abstract class Map {
 
@@ -46,11 +46,15 @@ export abstract class Map {
 
   abstract getFillColor(d: Feature<Polygon, CountryProperties>): string
 
-  protected getColorScale(): d3.ScaleSequential<string> {
-    if (this.selectedYear <= separatePointsSince) {
-      return this.fillColorScale12;
+  public receiveYear(year: number) {
+    this.selectedYear = year;
+    if (this.isMapDisplayed(year)) {
+      this.targetElement.style("display", "block");
+      this.redrawMap();
     }
-    return this.fillColorScale24;
+    else {
+      this.targetElement.style("display", "none");
+    }
   }
 
   private zoom(g: d3.Selection<SVGElement, {}, HTMLElement, any>) {
@@ -136,15 +140,11 @@ export abstract class Map {
     return this.getColorScale()(points);
   }
 
-  public receiveYear(year: number) {
-    if (this.isMapDisplayed(year)) {
-      this.targetElement.style("display", "block");
+  protected getColorScale(): d3.ScaleSequential<string> {
+    if (this.selectedYear <= separatedPointsSince) {
+      return this.fillColorScale12;
     }
-    else {
-      this.targetElement.style("display", "none");
-    }
-    this.selectedYear = year;
-    this.redrawMap();
+    return this.fillColorScale24;
   }
 
   public receiveResize() {

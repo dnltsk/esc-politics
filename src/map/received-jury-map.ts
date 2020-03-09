@@ -1,7 +1,7 @@
 import {Map} from "./map";
 import {Feature, Polygon} from "geojson";
 import {CountryProperties} from "../types";
-import {separatePointsSince} from "../scripts/config";
+import {separatedPointsSince} from "../scripts/config";
 
 export class ReceivedJuryMap extends Map {
 
@@ -11,7 +11,7 @@ export class ReceivedJuryMap extends Map {
   }
 
   isMapDisplayed(year: number): boolean {
-    return year >= separatePointsSince;
+    return year >= separatedPointsSince;
   }
 
   isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean {

@@ -1,6 +1,6 @@
 import {loadParticipants, loadPointsGivenTo, loadResultsOf} from "../io";
 import {parse as _htmlParse} from 'node-html-parser';
-import {allYears, separatePointsSince} from "../config";
+import {allYears, separatedPointsSince} from "../config";
 import {CountryCode, CountryMap, EscTimeseries, PointsReceivedMap} from "../../types";
 
 let htmlParse: any = _htmlParse;
@@ -35,14 +35,14 @@ export class Parser {
       rows.forEach((cn) => {
         let sourceCountry: CountryCode = cn.querySelector("img").getAttribute("src").substr(8, 2);
         completePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[2].text.trim());
-        if (year >= separatePointsSince) {
+        if (year >= separatedPointsSince) {
           juryPointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[3].text.trim());
           telePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[4].text.trim());
         }
       });
 
       countryMap[country].completePointsReceived = completePointsReceived;
-      if (year >= separatePointsSince) {
+      if (year >= separatedPointsSince) {
         countryMap[country].juryPointsReceived = juryPointsReceived;
         countryMap[country].telePointsReceived = telePointsReceived;
       }

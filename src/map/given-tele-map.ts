@@ -1,7 +1,7 @@
 import {Map} from "./map";
 import {Feature, Polygon} from "geojson";
 import {CountryProperties} from "../types";
-import {finalsSince, separatePointsSince} from "../scripts/config";
+import {finalsSince, separatedPointsSince} from "../scripts/config";
 
 export class GivenTeleMap extends Map {
 
@@ -11,7 +11,7 @@ export class GivenTeleMap extends Map {
   }
 
   isMapDisplayed(year: number): boolean {
-    return year >= separatePointsSince;
+    return year >= separatedPointsSince;
   }
 
   isCountryRelevant(d: Feature<Polygon, CountryProperties>): boolean {
