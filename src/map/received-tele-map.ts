@@ -7,9 +7,9 @@ export class ReceivedTeleMap extends Map {
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
     const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
     if(countryResult.telePointsReceived[d.properties.ISO_A2] == null){
-      super.getColorScale()(0);
+      this.fillColorScale12(0);
     }
-    return super.getColorScale()(countryResult.telePointsReceived[d.properties.ISO_A2]);
+    return this.fillColorScale12(countryResult.telePointsReceived[d.properties.ISO_A2]);
   }
 
   isMapHidden(year: number): boolean {

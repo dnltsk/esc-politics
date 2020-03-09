@@ -7,9 +7,9 @@ export class GivenJuryMap extends Map {
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
     const countryResult = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2];
     if(countryResult.juryPointsReceived[this.selectedCountry] == null){
-      super.getColorScale()(0);
+      this.fillColorScale12(0);
     }
-    return super.getColorScale()(countryResult.juryPointsReceived[this.selectedCountry]);
+    return this.fillColorScale12(countryResult.juryPointsReceived[this.selectedCountry]);
   }
 
   isMapHidden(year: number): boolean {
