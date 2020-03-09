@@ -11,8 +11,8 @@ export abstract class Map {
   readonly path = d3.geoPath()
     .projection(this.projection);
 
-  readonly fillColorScale24 = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 24]);
-  readonly fillColorScale12 = d3.scaleSequential(d3["interpolateOrRd"]).domain([0, 12]);
+  readonly fillColorScale24 = d3.scaleSequential(d3["interpolateYlOrRd"]).domain([0, 24]);
+  readonly fillColorScale12 = d3.scaleSequential(d3["interpolateYlOrRd"]).domain([0, 12]);
 
   eventBus: EventBus;
   mapData: FeatureCollection<Polygon, CountryProperties>;
@@ -41,7 +41,7 @@ export abstract class Map {
 
   abstract getFillColor(d: Feature<Polygon, CountryProperties>): string
 
-  abstract isMapHidden(year: number):boolean
+  abstract isMapDisplayed(year: number): boolean
 
   private initMap() {
 
@@ -113,11 +113,15 @@ export abstract class Map {
       });
   }
 
-  protected getColorScale(): d3.ScaleSequential<string>{
-    if(this.selectedYear <= 2016){
-      return this.fillColorScale12;
+  public receiveYear(year: number) {
+    if (this.isMapDisplayed(year)) {
+      this.targetElement.style("display", "block");
     }
-    return this.fillColorScale24;
+    else {
+      this.targetElement.style("display", "none");
+    }
+    this.selectedYear = year;
+    this.redrawMap();
   }
 
   public receiveResize() {
@@ -152,14 +156,11 @@ export abstract class Map {
     this.g.selectAll("path").attr("d", this.path);
   }
 
-  public receiveYear(year: number) {
-    if(this.isMapHidden(year)){
-      this.targetElement.style("display", "none");
-    }else{
-      this.targetElement.style("display", "block");
+  protected getColorScale(): d3.ScaleSequential<string> {
+    if (this.selectedYear <= 2016) {
+      return this.fillColorScale12;
     }
-    this.selectedYear = year;
-    this.redrawMap();
+    return this.fillColorScale24;
   }
 
   private localMouseover(geom: Feature<Polygon, CountryProperties>, path: d3.Selection<SVGElement, {}, HTMLElement, any>) {

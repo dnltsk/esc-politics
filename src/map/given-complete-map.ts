@@ -6,14 +6,15 @@ export class GivenCompleteMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
     const countryResult = this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2];
-    if(countryResult.completePointsReceived[this.selectedCountry] == null){
-      return super.getColorScale()(0);
+    if (countryResult.completePointsReceived[this.selectedCountry] == null
+        || countryResult.completePointsReceived[this.selectedCountry] == 0) {
+      return "white";
     }
     return super.getColorScale()(countryResult.completePointsReceived[this.selectedCountry]);
   }
 
-  isMapHidden(year: number): boolean {
-    return false;
+  isMapDisplayed(year: number): boolean {
+    return true;
   }
 
 }

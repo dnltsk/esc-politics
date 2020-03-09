@@ -11,6 +11,7 @@ export class Parser {
     let escTimeseries: EscTimeseries = {};
     allYears.forEach((year) => {
       console.log(year, "...");
+
       const countryMap: CountryMap = this.parseResultsOf(year);
       this.parsePointsGivenTo(year, countryMap);
       escTimeseries[year] = {
@@ -28,13 +29,22 @@ export class Parser {
       let rows: Array<any> = pointsGivenToDocument.querySelector("#tabelle1").querySelectorAll(".tr_output_tabelle_1, .tr_output_tabelle_2");
 
       let completePointsReceived: PointsReceivedMap = {};
+      let juryPointsReceived: PointsReceivedMap = {};
+      let telePointsReceived: PointsReceivedMap = {};
       rows.forEach((cn) => {
         let sourceCountry: CountryCode = cn.querySelector("img").getAttribute("src").substr(8, 2);
-        let points = parseInt(cn.querySelectorAll("td")[2].text.trim());
-        completePointsReceived[sourceCountry] = points;
+        completePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[2].text.trim());
+        if (year >= 2016) {
+          juryPointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[3].text.trim());
+          telePointsReceived[sourceCountry] = parseInt(cn.querySelectorAll("td")[4].text.trim());
+        }
       });
 
       countryMap[country].completePointsReceived = completePointsReceived;
+      if (year >= 2016) {
+        countryMap[country].juryPointsReceived = juryPointsReceived;
+        countryMap[country].telePointsReceived = telePointsReceived;
+      }
     });
 
   }
