@@ -1,4 +1,4 @@
-import {Map} from "./scripts/map/map";
+import {Map} from "./map/map";
 import {CountryCode} from "./types";
 import {Controls} from "./controls";
 

@@ -1,8 +1,8 @@
-import {fitToMap, initFitToMap, project} from "../../projection-util";
+import {fitToMap, initFitToMap, project} from "../projection-util";
 import * as d3 from "d3";
 import {Feature, FeatureCollection, Polygon} from "geojson";
-import {CountryCode, CountryProperties, EscTimeseries} from "../../types";
-import {EventBus} from "../../event-bus";
+import {CountryCode, CountryProperties, EscTimeseries} from "../types";
+import {EventBus} from "../event-bus";
 
 export abstract class Map {
 

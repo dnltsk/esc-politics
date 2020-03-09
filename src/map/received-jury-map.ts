@@ -1,8 +1,8 @@
 import {Map} from "./map";
 import {Feature, Polygon} from "geojson";
-import {CountryProperties} from "../../types";
+import {CountryProperties} from "../types";
 
-export class ReceivedTeleMap extends Map {
+export class ReceivedJuryMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
     const countryResult = this.escTimeseries[this.selectedYear].countries[this.selectedCountry];
@@ -10,7 +10,7 @@ export class ReceivedTeleMap extends Map {
   }
 
   isMapHidden(year: number): boolean {
-    return year < 2014;
+    return false;
   }
 
 }

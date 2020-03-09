@@ -3,10 +3,10 @@ import {FeatureCollection, Polygon} from "geojson";
 import {CountryProperties, EscTimeseries} from "./types";
 import {EventBus} from "./event-bus";
 import {Controls} from "./controls";
-import {ReceivedJuryMap} from "./scripts/map/received-jury-map";
-import {GivenJuryMap} from "./scripts/map/given-jury-map";
-import {ReceivedTeleMap} from "./scripts/map/received-tele-map";
-import {GivenTeleMap} from "./scripts/map/given-tele-map";
+import {ReceivedJuryMap} from "./map/received-jury-map";
+import {GivenJuryMap} from "./map/given-jury-map";
+import {ReceivedTeleMap} from "./map/received-tele-map";
+import {GivenTeleMap} from "./map/given-tele-map";
 
 export class App {
 
