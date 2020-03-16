@@ -20,13 +20,10 @@ export class Controls {
   }
 
   public receiveYear(year: number) {
-    console.log("receiveYear", year);
     let topTen = Object.keys(this.escTimeseries[year].countries)
       .sort((country: CountryCode) => this.escTimeseries[year].countries[country].points)
       .map((country: CountryCode) => this.escTimeseries[year].countries[country])
       .slice(0, 9 + 1);
-
-    console.log(topTen);
 
     this.g.selectAll("topTen")
       .data(topTen)

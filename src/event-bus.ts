@@ -1,14 +1,13 @@
 import {Map} from "./map/map";
 import {CountryCode} from "./types";
 import {Controls} from "./controls";
+import {MapSwapper} from "./map-swapper";
 
 export class EventBus{
 
   public maps: Array<Map>;
   public controls: Controls;
-
-  constructor() {
-  }
+  public mapSwapper: MapSwapper;
 
   public sendResize() {
     this.maps.forEach((map) => {
@@ -42,6 +41,7 @@ export class EventBus{
 
   sendYear(year: number) {
     this.controls.receiveYear(year);
+    this.mapSwapper.receiveYear(year);
     this.maps.forEach((map) => {
       map.receiveYear(year);
     });

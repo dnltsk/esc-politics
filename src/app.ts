@@ -9,6 +9,7 @@ import {ReceivedTeleMap} from "./map/received-tele-map";
 import {GivenCompleteMap} from "./map/given-complete-map";
 import {GivenJuryMap} from "./map/given-jury-map";
 import {GivenTeleMap} from "./map/given-tele-map";
+import {MapSwapper} from "./map-swapper";
 
 export class App {
 
@@ -20,6 +21,7 @@ export class App {
   constructor() {
     this.fetchData().then(() => {
       this.eventBus = new EventBus();
+      this.eventBus.mapSwapper = new MapSwapper(this.initialYear);
       this.eventBus.controls = new Controls(this.eventBus, this.escTimeseries, this.initialYear);
       this.initMaps();
     });
@@ -37,14 +39,15 @@ export class App {
   }
 
   private initMaps() {
-    const ul = new ReceivedCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map-container"), this.initialYear);
-    const ll = new GivenCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ll-map-container"), this.initialYear);
-    const uc = new ReceivedJuryMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".uc-map-container"), this.initialYear);
-    const lc = new GivenJuryMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lc-map-container"), this.initialYear);
+    const ul = new ReceivedJuryMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ul-map-container"), this.initialYear);
+    const ll = new GivenJuryMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ll-map-container"), this.initialYear);
+    const uc = new ReceivedCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".uc-map-container"), this.initialYear);
+    const lc = new GivenCompleteMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lc-map-container"), this.initialYear);
     const ur = new ReceivedTeleMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".ur-map-container"), this.initialYear);
     const lr = new GivenTeleMap(this.eventBus, this.mapData, this.escTimeseries, d3.select(".lr-map-container"), this.initialYear);
     this.eventBus.maps = [ul, ll, uc, lc, ur, lr];
   }
+
 
 }
 
