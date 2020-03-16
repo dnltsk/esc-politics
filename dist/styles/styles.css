@@ -23,16 +23,16 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  grid-template-areas: "ulxxxxxx uc ur" "ll lc lr";
+  grid-template-areas: "ul uc ur" "ll lc lr";
   grid-area: maps;
 }
 
-.ulxxxxxx {
+.ul {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 2em 27em;
   grid-template-areas: "ul-map-title" "ul-map-container";
-  grid-area: ulxxxxxx;
+  grid-area: ul;
 }
 
 .ul-map-container { grid-area: ul-map-container; }
