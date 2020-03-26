@@ -6,11 +6,13 @@ import {finalsSince, separatedPointsSince} from "../scripts/config";
 export class ReceivedJuryMap extends Map {
 
   getFillColor(d: Feature<Polygon, CountryProperties>): string {
-    if(this.selectedYear < finalsSince
-       || this.escTimeseries[this.selectedYear].countries[d.properties.ISO_A2] == null
-       || this.escTimeseries[this.selectedYear].countries[this.selectedCountry]?.juryPointsReceived == null
-       || this.escTimeseries[this.selectedYear].participants.indexOf(d.properties.ISO_A2) == -1){
-      return "grey"
+    if(this.selectedYear < finalsSince){
+      // Jahr keine hatte nur Gesamtpunkte -> Jury Punkte werden ausgeblendet
+      return "grey";
+    }
+    if(this.escTimeseries[this.selectedYear].countriesInFinal.indexOf(d.properties.ISO_A2) == -1){
+      // Land nahm nicht in Endrunde Teil -> kann keine Jury Punkte bekommen haben
+      return "grey";
     }
     const receivedPoints = this.escTimeseries[this.selectedYear].countries[this.selectedCountry]?.juryPointsReceived[d.properties.ISO_A2];
     return this.whiteOrColor(receivedPoints);

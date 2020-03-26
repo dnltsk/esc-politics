@@ -16,6 +16,7 @@ export class EventBus{
   }
 
   sendMouseover(ISO_A2: CountryCode) {
+    this.controls.receiveMouseover(ISO_A2);
     this.maps.forEach((map) => {
       map.receiveMouseover(ISO_A2);
     });

@@ -16,7 +16,8 @@ export class Parser {
       this.parsePointsGivenTo(year, countryMap);
       escTimeseries[year] = {
         countries: countryMap,
-        participants: this.parseParticipants(year)
+        countriesInFinal: <CountryCode[]>Object.keys(countryMap),
+        countriesParticipating: this.parseParticipants(year)
       }
     });
     return escTimeseries;

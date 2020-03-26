@@ -16,7 +16,8 @@ export type EscTimeseries = {
 
 export type EscYear = {
   meta?: any,
-  participants: CountryCode[],
+  countriesParticipating: CountryCode[],
+  countriesInFinal:CountryCode[],
   countries: CountryMap
 }
 
